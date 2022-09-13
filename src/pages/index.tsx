@@ -1,5 +1,11 @@
+import { styled } from '../styles'
+
+const Button = styled('button', {
+  backgroundColor: '$green500'
+})
+
 export default function Home() {
   return (
-    <h1>Hello!!</h1>
+    <Button>Enviar</Button>
   )
 }
