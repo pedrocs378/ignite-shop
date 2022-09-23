@@ -7,6 +7,7 @@ import axios from 'axios'
 import { stripe } from '../../lib/stripe'
 
 import * as S from '../../styles/pages/product'
+import Head from 'next/head'
 
 type Params = {
   id: string
@@ -44,22 +45,28 @@ export default function Product({ product }: ProductProps) {
   }
 
   return (
-    <S.ProductContainer>
-      <S.ImageContainer>
-        <Image src={product.imageUrl} alt={product.name} width={520} height={480} />
-      </S.ImageContainer>
+    <>
+      <Head>
+        <title>{product.name} | Ignite Shop</title>
+      </Head>
 
-      <S.ProductDetails>
-        <h1>{product.name}</h1>
-        <span>{product.price}</span>
+      <S.ProductContainer>
+        <S.ImageContainer>
+          <Image src={product.imageUrl} alt={product.name} width={520} height={480} />
+        </S.ImageContainer>
 
-        <p>{product.description}</p>
+        <S.ProductDetails>
+          <h1>{product.name}</h1>
+          <span>{product.price}</span>
 
-        <button onClick={handleBuyProduct} disabled={isCreatingCheckoutSession}>
-          Comprar agora
-        </button>
-      </S.ProductDetails>
-    </S.ProductContainer>
+          <p>{product.description}</p>
+
+          <button onClick={handleBuyProduct} disabled={isCreatingCheckoutSession}>
+            Comprar agora
+          </button>
+        </S.ProductDetails>
+      </S.ProductContainer>
+    </>
   )
 }
 
