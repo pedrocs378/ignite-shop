@@ -1,20 +1,19 @@
 import { AppProps } from 'next/app'
-import Image from 'next/image'
 
-import logoImg from '../assets/logo.svg'
+import { Header } from '../components/header'
 
 import { globalStyles } from '../styles/global'
 
 import * as S from '../styles/pages/app'
+
+import 'react-modern-drawer/dist/index.css'
 
 globalStyles()
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <S.Container>
-      <S.Header>
-        <Image src={logoImg.src} alt="" width={logoImg.width} height={logoImg.height} />
-      </S.Header>
+      <Header />
 
       <Component {...pageProps} />
     </S.Container>

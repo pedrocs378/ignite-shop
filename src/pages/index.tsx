@@ -1,6 +1,9 @@
+import { MouseEvent, useCallback } from 'react'
 import { GetStaticProps } from 'next'
+import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Handbag } from 'phosphor-react'
 import { useKeenSlider } from 'keen-slider/react'
 import Stripe from 'stripe'
 
@@ -9,15 +12,16 @@ import { stripe } from '../lib/stripe'
 import * as S from '../styles/pages/home'
 
 import 'keen-slider/keen-slider.min.css'
-import Head from 'next/head'
+
+type ProductData = {
+  id: string
+  name: string
+  imageUrl: string
+  price: string
+}
 
 type HomeProps = {
-  products: {
-    id: string
-    name: string
-    imageUrl: string
-    price: string
-  }[]
+  products: ProductData[]
 }
 
 export default function Home({ products }: HomeProps) {
@@ -27,6 +31,10 @@ export default function Home({ products }: HomeProps) {
       spacing: 48
     }
   })
+
+  const handleAddProductToCart = useCallback((event: MouseEvent<HTMLButtonElement>, product: ProductData) => {
+    event.preventDefault()
+  }, [])
 
   return (
     <>
@@ -41,10 +49,20 @@ export default function Home({ products }: HomeProps) {
               <S.Product className="keen-slider__slide">
                 <Image src={product.imageUrl} alt={product.name} width={520} height={400} />
 
-                <footer>
-                  <strong>{product.name}</strong>
-                  <span>{product.price}</span>
-                </footer>
+                <S.ProductFooter>
+                  <div>
+                    <strong>{product.name}</strong>
+                    <span>{product.price}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    title="Adicionar ao carrinho"
+                    onClick={(e) => handleAddProductToCart(e, product)}
+                  >
+                    <Handbag size={32} weight="bold" color="white" />
+                  </button>
+                </S.ProductFooter>
               </S.Product>
             </Link>
           )

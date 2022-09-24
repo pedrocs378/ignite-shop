@@ -16,6 +16,9 @@ export default function AppDocument() {
 
       <body>
         <Main />
+
+        <div id="drawer-container" />
+
         <NextScript />
       </body>
     </Html>

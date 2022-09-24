@@ -44,10 +44,14 @@ export default function Product({ product }: ProductProps) {
     }
   }
 
+  function handleAddProductToCart() {
+
+  }
+
   return (
     <>
       <Head>
-        <title>{product.name} | Ignite Shop</title>
+        <title>{product.name}</title>
       </Head>
 
       <S.ProductContainer>
@@ -61,8 +65,8 @@ export default function Product({ product }: ProductProps) {
 
           <p>{product.description}</p>
 
-          <button onClick={handleBuyProduct} disabled={isCreatingCheckoutSession}>
-            Comprar agora
+          <button onClick={handleAddProductToCart}>
+            Colocar na sacola
           </button>
         </S.ProductDetails>
       </S.ProductContainer>

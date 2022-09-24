@@ -21,42 +21,71 @@ export const Product = styled('a', {
     objectFit: 'cover'
   },
 
-  footer: {
-    position: 'absolute',
-    bottom: '0.25rem',
-    left: '0.25rem',
-    right: '0.25rem',
-    padding: '2rem',
-    overflow: 'hidden',
-
-    borderRadius: 6,
-
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-
-    transform: 'translateY(110%)',
-    opacity: 0,
-    transition: 'all 0.2s ease-in-out',
-
-    strong: {
-      fontSize: '$lg',
-      color: '$gray100'
-    },
-
-    span: {
-      fontSize: '$xl',
-      fontWeight: 'bold',
-      color: '$green300'
-    }
-  },
-
   '&:hover': {
     footer: {
       transform: 'translateY(0%)',
       opacity: 1
+    }
+  }
+})
+
+export const ProductFooter = styled('footer', {
+  position: 'absolute',
+  bottom: '0.25rem',
+  left: '0.25rem',
+  right: '0.25rem',
+  padding: '2rem',
+  overflow: 'hidden',
+
+  borderRadius: 6,
+
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+
+  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+
+  transform: 'translateY(110%)',
+  opacity: 0,
+  transition: 'all 0.2s ease-in-out',
+
+  div: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem'
+  },
+
+  strong: {
+    fontSize: '$lg',
+    color: '$gray100',
+    display: '-webkit-box',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    '-webkit-line-clamp': 2,
+    '-webkit-box-orient': 'vertical'
+  },
+
+  span: {
+    fontSize: '$xl',
+    fontWeight: 'bold',
+    color: '$green300'
+  },
+
+  button: {
+    padding: '0.75rem',
+    borderRadius: 6,
+    fontSize: 0,
+    border: 0,
+    background: '$green500',
+
+    transition: 'all 0.2s',
+
+    '&:hover': {
+      background: '$green300'
+    },
+    '&:active': {
+      background: '$green500'
     }
   }
 })
