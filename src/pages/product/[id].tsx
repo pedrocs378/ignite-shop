@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Image from 'next/image'
+import Head from 'next/head'
 import Stripe from 'stripe'
 import axios from 'axios'
 
 import { stripe } from '../../lib/stripe'
 
+import { useCart } from '../../contexts/cart-context'
+
 import * as S from '../../styles/pages/product'
-import Head from 'next/head'
 
 type Params = {
   id: string
@@ -15,9 +17,11 @@ type Params = {
 
 type ProductProps = {
   product: {
+    id: string
     name: string
     imageUrl: string
-    price: string
+    price: number
+    formattedPrice: string
     defaultPriceId: string
     description: string
   }
@@ -25,6 +29,8 @@ type ProductProps = {
 
 export default function Product({ product }: ProductProps) {
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false)
+
+  const { addItemToCart } = useCart()
 
   async function handleBuyProduct() {
     try {
@@ -44,10 +50,6 @@ export default function Product({ product }: ProductProps) {
     }
   }
 
-  function handleAddProductToCart() {
-
-  }
-
   return (
     <>
       <Head>
@@ -61,11 +63,11 @@ export default function Product({ product }: ProductProps) {
 
         <S.ProductDetails>
           <h1>{product.name}</h1>
-          <span>{product.price}</span>
+          <span>{product.formattedPrice}</span>
 
           <p>{product.description}</p>
 
-          <button onClick={handleAddProductToCart}>
+          <button onClick={() => addItemToCart(product)}>
             Colocar na sacola
           </button>
         </S.ProductDetails>
@@ -98,7 +100,8 @@ export const getStaticProps: GetStaticProps<any, Params> = async ({ params }) =>
     imageUrl: product.images[0],
     description: product.description,
     defaultPriceId: price.id,
-    price: new Intl.NumberFormat('pt-BR', {
+    price: price.unit_amount / 100,
+    formattedPrice: new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(price.unit_amount / 100)

@@ -151,7 +151,7 @@ export const CartFooter = styled('footer', {
 
     transition: 'all 0.2s',
 
-    '&:not(disabled):hover': {
+    '&:not(:disabled):hover': {
       backgroundColor: '$green300'
     },
 

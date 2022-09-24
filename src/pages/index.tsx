@@ -7,6 +7,8 @@ import { Handbag } from 'phosphor-react'
 import { useKeenSlider } from 'keen-slider/react'
 import Stripe from 'stripe'
 
+import { useCart } from '../contexts/cart-context'
+
 import { stripe } from '../lib/stripe'
 
 import * as S from '../styles/pages/home'
@@ -17,7 +19,8 @@ type ProductData = {
   id: string
   name: string
   imageUrl: string
-  price: string
+  price: number
+  formattedPrice: string
 }
 
 type HomeProps = {
@@ -29,12 +32,17 @@ export default function Home({ products }: HomeProps) {
     slides: {
       perView: 3,
       spacing: 48
-    }
+    },
+
   })
+
+  const { addItemToCart } = useCart()
 
   const handleAddProductToCart = useCallback((event: MouseEvent<HTMLButtonElement>, product: ProductData) => {
     event.preventDefault()
-  }, [])
+
+    addItemToCart(product)
+  }, [addItemToCart])
 
   return (
     <>
@@ -52,7 +60,7 @@ export default function Home({ products }: HomeProps) {
                 <S.ProductFooter>
                   <div>
                     <strong>{product.name}</strong>
-                    <span>{product.price}</span>
+                    <span>{product.formattedPrice}</span>
                   </div>
 
                   <button
@@ -84,7 +92,8 @@ export const getStaticProps: GetStaticProps = async () => {
       id: product.id,
       name: product.name,
       imageUrl: product.images[0],
-      price: new Intl.NumberFormat('pt-BR', {
+      price: price.unit_amount / 100,
+      formattedPrice: new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'
       }).format(price.unit_amount / 100)

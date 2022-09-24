@@ -63,7 +63,7 @@ export const ProductDetails = styled('div', {
 
     transition: 'all 0.2s',
 
-    '&:not(disabled):hover': {
+    '&:not(:disabled):hover': {
       backgroundColor: '$green300'
     },
 
