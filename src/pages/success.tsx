@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { destroyCookie } from 'nookies'
 import Stripe from 'stripe';
 
-import { stripe } from '../../lib/stripe';
+import { stripe } from '../lib/stripe';
 
-import * as S from '../../styles/pages/success';
+import * as S from '../styles/pages/success';
 
 type SuccessProps = {
   customerName: string

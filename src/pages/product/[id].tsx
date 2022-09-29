@@ -31,7 +31,7 @@ export default function Product({ product }: ProductProps) {
   return (
     <>
       <Head>
-        <title>{product.name}</title>
+        <title>{`${product.name} | Ignite Shop`}</title>
       </Head>
 
       <S.ProductContainer>
