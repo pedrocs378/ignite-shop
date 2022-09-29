@@ -1,7 +1,9 @@
-import { useReducer } from 'react'
+import { useReducer, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Handbag, X } from 'phosphor-react'
+import { Handbag, SmileySad, X } from 'phosphor-react'
+import ClockLoader from 'react-spinners/ClockLoader'
+import axios from 'axios'
 
 import { useCart } from '../../contexts/cart-context'
 
@@ -12,7 +14,9 @@ import { Drawer } from '../drawer'
 import * as S from './styles'
 
 export function Header() {
-  const [isOpen, toggleOpen] = useReducer((state) => !state, false)
+  const [isOpen, toggleDrawerOpen] = useReducer((state) => !state, false)
+
+  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false)
 
   const {
     itemsQuantity,
@@ -20,6 +24,27 @@ export function Header() {
     cartItems,
     removeItemFromCart
   } = useCart()
+
+
+  async function handleBuyProduct() {
+    try {
+      setIsCreatingCheckoutSession(true)
+
+      const priceIds = cartItems.map((cartItem) => cartItem.defaultPriceId)
+
+      const response = await axios.post('/api/checkout', {
+        priceIds
+      })
+
+      const { checkoutUrl } = response.data
+
+      window.location.href = checkoutUrl
+    } catch (err) {
+      setIsCreatingCheckoutSession(false)
+
+      alert('Falha ao redirecionar ao checkout')
+    }
+  }
 
   return (
     <>
@@ -33,7 +58,7 @@ export function Header() {
         <button
           type="button"
           title="Carrinho"
-          onClick={toggleOpen}
+          onClick={toggleDrawerOpen}
         >
           <Handbag size={24} weight="bold" color="#8D8D99" />
 
@@ -47,13 +72,13 @@ export function Header() {
         direction="right"
         size={480}
         open={isOpen}
-        onClose={toggleOpen}
+        onClose={toggleDrawerOpen}
       >
         <S.CartHeader>
           <button
             type="button"
             title="Fechar carrinho"
-            onClick={toggleOpen}
+            onClick={toggleDrawerOpen}
           >
             <X weight="bold" color="#8D8D99" size={24} />
           </button>
@@ -62,34 +87,42 @@ export function Header() {
         <S.CartContent>
           <strong>Sacola de compras</strong>
 
-          <S.CartList>
-            {cartItems.map((cartItem) => {
-              return (
-                <S.CartItem key={cartItem.id}>
-                  <S.ImageContainer>
-                    <Image
-                      src={cartItem.imageUrl}
-                      alt={cartItem.name}
-                      width={94}
-                      height={94}
-                    />
-                  </S.ImageContainer>
+          {!cartItems.length ? (
+            <S.EmptyCart>
+              <span>Carrinho vazio</span>
 
-                  <S.CartItemDetails>
-                    <p>{cartItem.name}</p>
-                    <strong>{cartItem.formattedPrice}</strong>
+              <SmileySad size={32} />
+            </S.EmptyCart>
+          ) : (
+            <S.CartList>
+              {cartItems.map((cartItem) => {
+                return (
+                  <S.CartItem key={cartItem.id}>
+                    <S.ImageContainer>
+                      <Image
+                        src={cartItem.imageUrl}
+                        alt={cartItem.name}
+                        width={94}
+                        height={94}
+                      />
+                    </S.ImageContainer>
 
-                    <button
-                      type="button"
-                      onClick={() => removeItemFromCart(cartItem.id)}
-                    >
-                      Remover
-                    </button>
-                  </S.CartItemDetails>
-                </S.CartItem>
-              )
-            })}
-          </S.CartList>
+                    <S.CartItemDetails>
+                      <p>{cartItem.name}</p>
+                      <strong>{cartItem.formattedPrice}</strong>
+
+                      <button
+                        type="button"
+                        onClick={() => removeItemFromCart(cartItem.id)}
+                      >
+                        Remover
+                      </button>
+                    </S.CartItemDetails>
+                  </S.CartItem>
+                )
+              })}
+            </S.CartList>
+          )}
         </S.CartContent>
 
         <S.CartFooter>
@@ -105,8 +138,12 @@ export function Header() {
             </S.InfoRow>
           </S.CartInfoContainer>
 
-          <button type="button" disabled={itemsQuantity === 0}>
-            Finalizar compra
+          <button
+            type="button"
+            disabled={itemsQuantity === 0 || isCreatingCheckoutSession}
+            onClick={handleBuyProduct}
+          >
+            {isCreatingCheckoutSession ? <ClockLoader color="white" size={15} /> : 'Finalizar compra' }
           </button>
         </S.CartFooter>
       </Drawer>

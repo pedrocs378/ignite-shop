@@ -1,4 +1,5 @@
 import { AppProps } from 'next/app'
+import { Toaster } from 'react-hot-toast'
 
 import { CartProvider } from '../contexts/cart-context'
 
@@ -14,13 +15,17 @@ globalStyles()
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <S.Container>
-      <CartProvider>
-        <Header />
+    <>
+      <Toaster />
 
-        <Component {...pageProps} />
-      </CartProvider>
-    </S.Container>
+      <S.Container>
+        <CartProvider>
+          <Header />
+
+          <Component {...pageProps} />
+        </CartProvider>
+      </S.Container>
+    </>
   )
 }
 

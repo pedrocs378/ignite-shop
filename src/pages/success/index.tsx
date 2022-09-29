@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { destroyCookie } from 'nookies'
 import Stripe from 'stripe';
 
 import { stripe } from '../../lib/stripe';
@@ -10,13 +11,19 @@ import * as S from '../../styles/pages/success';
 
 type SuccessProps = {
   customerName: string
-  product: {
+  totalRemainingProducts: number
+  products: {
+    id: string
     name: string
     imageUrl: string
-  }
+  }[]
 }
 
-export default function Success({ customerName, product }: SuccessProps) {
+export default function Success({
+  customerName,
+  totalRemainingProducts,
+  products
+}: SuccessProps) {
   return (
     <>
       <Head>
@@ -26,14 +33,27 @@ export default function Success({ customerName, product }: SuccessProps) {
       </Head>
 
       <S.SuccessContainer>
+        <S.ProductImagesContainer>
+          {products.map((product, idx) => (
+            <S.ImageContainer key={product.id} style={{ zIndex: idx }}>
+              <Image src={product.imageUrl} alt={product.name} height={110} width={120} />
+            </S.ImageContainer>
+          ))}
+
+          {totalRemainingProducts > 0 && (
+            <span>+ {totalRemainingProducts}</span>
+          )}
+        </S.ProductImagesContainer>
+
         <h1>Compra efetuada!</h1>
 
-        <S.ImageContainer>
-          <Image src={product.imageUrl} alt="" height={110} width={120} />
-        </S.ImageContainer>
-
         <p>
-          Uhuul <strong>{customerName}</strong>, sua <strong>{product.name}</strong> já está a caminho da sua casa.
+          Uhuul{' '}
+          <strong>{customerName}</strong>,{' '}
+          sua compra de{' '}
+          <strong>{products.length}</strong>{' '}
+          {products.length === 1 ? 'camiseta' : 'camisetas'}{' '}
+          já está a caminho da sua casa.
         </p>
 
         <Link href="/">
@@ -44,7 +64,9 @@ export default function Success({ customerName, product }: SuccessProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { query } = ctx
+
   if (!query.session_id) {
     return {
       props: {},
@@ -54,6 +76,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     }
   }
 
+  destroyCookie(ctx, '@ignite-shop:cart')
+
   const sessionId = String(query.session_id)
 
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
@@ -61,15 +85,24 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   })
 
   const customerName = session.customer_details.name
-  const product = session.line_items.data[0].price.product as Stripe.Product
+
+  const products = session.line_items.data.slice(0, 3).map((lineItem) => {
+    const product = lineItem.price.product as Stripe.Product
+
+    return {
+      id: product.id,
+      name: product.name,
+      imageUrl: product.images[0]
+    }
+  })
+
+  const totalRemainingProducts = session.line_items.data.length - products.length
 
   return {
     props: {
       customerName,
-      product: {
-        name: product.name,
-        imageUrl: product.images[0]
-      }
+      products,
+      totalRemainingProducts
     }
   }
 }

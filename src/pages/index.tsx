@@ -19,6 +19,7 @@ type ProductData = {
   id: string
   name: string
   imageUrl: string
+  defaultPriceId: string
   price: number
   formattedPrice: string
 }
@@ -93,6 +94,7 @@ export const getStaticProps: GetStaticProps = async () => {
       name: product.name,
       imageUrl: product.images[0],
       price: price.unit_amount / 100,
+      defaultPriceId: price.id,
       formattedPrice: new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'

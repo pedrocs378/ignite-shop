@@ -71,6 +71,19 @@ export const CartContent = styled('div', {
   }
 })
 
+export const EmptyCart = styled('div', {
+  flex: 1,
+
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0.5rem',
+
+  span: {
+    fontSize: '$lg'
+  }
+})
+
 export const CartList = styled('div', {
   marginTop: '2rem',
   maxHeight: 'calc(100% - 5rem)',
